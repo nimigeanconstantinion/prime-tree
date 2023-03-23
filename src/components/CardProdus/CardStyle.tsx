@@ -14,6 +14,7 @@ export const WrapperCard=styled.div.attrs({className:"divhome"})`
     display: none;
   }
   
+  
   .cardtitle{
     font-size: 0.8em;
     color:black;

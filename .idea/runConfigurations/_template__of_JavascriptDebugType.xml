@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="true" type="JavascriptDebugType" editBeforeRun="true" uri="http://localhost:3000/" useFirstLineBreakpoints="true">
+    <mapping url="http://localhost:3000" local-file="$PROJECT_DIR$/src" />
+    <method v="2">
+      <option name="LaunchBrowser.Before.Run" url="http://localhost:3000/" withDebugger="true" />
+    </method>
+  </configuration>
+</component>
