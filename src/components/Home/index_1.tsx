@@ -1,6 +1,6 @@
-import {ChangeEvent, cloneElement, useEffect, useState} from "react";
-
+import React, {ChangeEvent, cloneElement, useEffect, useRef, useState} from "react";
 import {CafeneaSauLocalitate} from "../model/CafeneaSauLocalitate";
+import {faCoffee} from "@fortawesome/free-solid-svg-icons/faCoffee";
 import Nod from "../model/Nod";
 import {ListaCafenele, ProdusDisponibil, PseudoApiService} from "../model/ListaCafenele";
 import {
@@ -10,6 +10,11 @@ import {
     TreeFilterInputOptions,
     TreeFilterValueChangeEvent, TreeProps
 } from 'primereact/tree';
+import { ContextMenu } from 'primereact/contextmenu';
+import { MenuItem } from 'primereact/menuitem';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faPlus,faMinus,faEdit, faPersonCirclePlus} from "@fortawesome/free-solid-svg-icons";
+
 import TreeNode from "primereact/treenode";
 import 'primereact/resources/themes/lara-light-indigo/theme.css';   // theme
 import 'primereact/resources/primereact.css';                       // core css
@@ -29,10 +34,169 @@ import useAsyncEffect from "use-async-effect";
 import {FormEvent} from "primereact/ts-helpers";
 import {isBoolean} from "util";
 import * as util from "util";
+import { read, utils, writeFile } from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
+import Api from "../../Api";
+import Child from "../AddSource/index"
+//<script lang="javascript" src="dist/xlsx.bundle.js"></script>
+
+
+//import XLSX, {utils, writeFileXLSX, XLSX$Consts, XLSX$Utils} from "xlsx";
+
+interface SelNode{
+        id:number,
+        label:string,
+        descriere:string,
+        tip:string,
+        children:[]
+}
+
 
 interface TreePr extends TreeProps{
 
 }
+
+//
+//const items: MenuItem[] = [
+    // {
+    //     label: 'File',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //         {
+    //             label: 'New',
+    //             icon: 'pi pi-fw pi-plus',
+    //             items: [
+    //                 {
+    //                     label: 'Bookmark',
+    //                     icon: 'pi pi-fw pi-bookmark'
+    //                 },
+    //                 {
+    //                     label: 'Video',
+    //                     icon: 'pi pi-fw pi-video'
+    //                 },
+    //
+    //             ]
+    //         },
+    //         {
+    //             label: 'Delete',
+    //             icon: 'pi pi-fw pi-trash'
+    //         },
+    //         {
+    //             separator: true
+    //         },
+    //         {
+    //             label: 'Export',
+    //             icon: 'pi pi-fw pi-external-link'
+    //         }
+    //     ]
+    // },
+    // {
+    //     label: 'Edit',
+    //     icon: 'pi pi-fw pi-pencil',
+    //     items: [
+    //         {
+    //             label: 'Left',
+    //             icon: 'pi pi-fw pi-align-left'
+    //         },
+    //         {
+    //             label: 'Right',
+    //             icon: 'pi pi-fw pi-align-right'
+    //         },
+    //         {
+    //             label: 'Center',
+    //             icon: 'pi pi-fw pi-align-center'
+    //         },
+    //         {
+    //             label: 'Justify',
+    //             icon: 'pi pi-fw pi-align-justify'
+    //         },
+    //
+    //     ]
+    // },
+    // {
+    //     label: 'Users',
+    //     icon: 'pi pi-fw pi-user',
+    //     items: [
+    //         {
+    //             label: 'New',
+    //             icon: 'pi pi-fw pi-user-plus',
+    //
+    //         },
+    //         {
+    //             label: 'Delete',
+    //             icon: 'pi pi-fw pi-user-minus',
+    //
+    //         },
+    //         {
+    //             label: 'Search',
+    //             icon: 'pi pi-fw pi-users',
+    //             items: [
+    //                 {
+    //                     label: 'Filter',
+    //                     icon: 'pi pi-fw pi-filter',
+    //                     items: [
+    //                         {
+    //                             label: 'Print',
+    //                             icon: 'pi pi-fw pi-print'
+    //                         }
+    //                     ]
+    //                 },
+    //                 {
+    //                     icon: 'pi pi-fw pi-bars',
+    //                     label: 'List'
+    //                 }
+    //             ]
+    //         }
+    //     ]
+    // },
+    // {
+    //     label: 'Events',
+    //     icon: 'pi pi-fw pi-calendar',
+    //     items: [
+    //         {
+    //             label: 'Edit',
+    //             icon: 'pi pi-fw pi-pencil',
+    //             items: [
+    //                 {
+    //                     label: 'Save',
+    //                     icon: 'pi pi-fw pi-calendar-plus'
+    //                 },
+    //                 {
+    //                     label: 'Delete',
+    //                     icon: 'pi pi-fw pi-calendar-minus'
+    //                 }
+    //             ]
+    //         },
+    //         {
+    //             label: 'Archive',
+    //             icon: 'pi pi-fw pi-calendar-times',
+    //             items: [
+    //                 {
+    //                     label: 'Remove',
+    //                     icon: 'pi pi-fw pi-calendar-minus'
+    //                 }
+    //             ]
+    //         }
+    //     ]
+    // },
+    // {
+    //     separator: true
+    // },
+//     {
+//         label: 'Quit',
+//         icon: 'pi pi-fw pi-power-off',
+//         command: (event) => {
+//
+//         }
+//     }
+// ];
+
+
+
+// const items: MenuItem = [
+//     { label: 'View', icon: 'pi pi-fw pi-search' },
+//     { label: 'Delete', icon: 'pi pi-fw pi-trash' }
+// ];
 
 
 function Index() {
@@ -46,22 +210,74 @@ function Index() {
 
         },
     ]);
+    const [add,setAdd]=useState(0);
     const [selectedKey, setSelectedKey] = useState<string>('');
     const [expandedKeys, setExpandedKeys] = useState<TreeExpandedKeysType>({'0-0': true,'1-':false,'2-':false});
     const [produse,setProduse]=useState<ProdusDisponibil[]>([]);
     const [filterV,setFilterv]=useState("");
     const [listaf,setLista]=useState<String[]>([]);
     const [numb,setNumb]=useState(0);
-
+    const [parinte,setParinte]=useState(null);
 
     const [ar,setAr]=useState(false);
+    const [ch,setCh]=useState(0);
+    const [ctx,setCtx]=useState(0);
+    const cm = useRef(null);
+  //  const cm = useRef(null);
+
+    const items: MenuItem[] = [
+        { label: 'View', icon: 'pi pi-fw pi-search' },
+        { label: 'Delete', icon: 'pi pi-fw pi-trash' }
+    ];
+
+//     const items: MenuItem[] = [
+//
+//         {
+//             label: 'Edit',
+//             icon: <FontAwesomeIcon className={"icomen"} icon={faEdit}/>,
+//             command: (event) => {
+//                 selmenu("EDIT");
+//             }
+//         },
+//         {
+//             label: 'Delete',
+//             icon: <FontAwesomeIcon className={"icomen"} icon={faMinus}/>,
+//             command: (event) => {
+//                 selmenu("DELETE");
+//             }
+//         },
+//         {
+//             label: 'Add Child',
+//             icon: <FontAwesomeIcon className={"icomen"} icon={faPersonCirclePlus} beat />,
+//             command: (event) => {
+//                 selmenu("EDIT");
+//             }
+//         },
+//
+//     {
+//         label: 'Quit',
+//         icon: <FontAwesomeIcon className={"icomen"} icon={faPlus}/>,
+//         command: (event) => {
+//             selmenu("QUIT");
+//     }
+//     }
+//
+// ];
+
 
     useEffect(() => {
-        createTree(filterV);
+        //createTree(filterV);
+        loadTreeFromBKEnd();
     }, []);
 
 
+    useEffect(()=>{
+        // console.log("ch parinte");
+            setCh(prevState =>prevState+1);
+         console.log("Am selectat ch ="+ch);
+        console.log(parinte);
 
+    },[parinte])
 
     useEffect(()=>{
 
@@ -172,6 +388,14 @@ function Index() {
         })
         nodes[0].children=listaNoduri;
         setNodes(nodes);
+
+    }
+
+    let loadTreeFromBKEnd=async ()=>{
+        let api=new Api();
+        let newT:Object[]=[];
+        newT=await api.getTree();
+        setNodes(newT as NodN[]);
 
     }
 
@@ -553,6 +777,12 @@ function Index() {
         getProduse(e.node.data.id);
     }
 
+    let selNode=(e:TreeEventNodeEvent)=>{
+        console.log("Am selectat");
+        setParinte(e.node.data);
+
+    }
+
     // let hasCoffie=async (cafea:string,nod:NodN):Promise<boolean|Error>=>{
     //
     //     if(nod.children!=undefined&&nod.children.length>0){
@@ -622,50 +852,135 @@ function Index() {
     }
 
     let filterTree=(e:ChangeEvent<HTMLInputElement>)=>{
+        const wb = utils.book_new();
+
+// STEP 2: Create data rows and styles
+//         let row = [
+//             { v: "Courier: 24", t: "s", s: { font: { name: "Courier", sz: 24 } } },
+//             { v: "bold & color", t: "s", s: { font: { bold: true, color: { rgb: "FF0000" } } } },
+//             { v: "fill: color", t: "s", s: { fill: { fgColor: { rgb: "E9E9E9" } } } },
+//             { v: "line\nbreak", t: "s", s: { alignment: { wrapText: true } } },
+//         ];
+//
+// // STEP 3: Create worksheet with rows; Add worksheet to workbook
+//         const ws = utils.aoa_to_sheet([row]);
+//         ws["!merges"]=[
+//                 {s:{r:0,c:0},e:{r:1,c:0}} /* A1:A2 */
+//             ]
+//         utils.book_append_sheet(wb, ws, "readme demo");
+//
+// // STEP 4: Write Excel file to browser
+//        XLSX.writeFile(wb, "xlsx-js-style-demo.xlsx");
+
        setAr(false);
+
        setNumb(0);
        setFilterv(e.target.value);
 
 
     }
 
+    let back=()=>{
+        setAdd(0);
+        setCh(1);
+        setParinte(Object);
+    }
+
+    let selmenu=(sel:string)=>{
+        console.log("Ati apasat "+sel);
+    }
+
+    let context=(e:TreeEventNodeEvent)=>{
+        console.log("Context pentru");
+        console.log(e.node.data);
+        setCtx(1);
+    }
+    // @ts-ignore
+    // @ts-ignore
     return (
         <>
+            <script lang="javascript" src="dist/xlsx.bundle.js"></script>
+
             <WrapperHome>
-            <div className={"divL"}>
+                <ContextMenu global model={items} ref={cm}></ContextMenu>
+
+            <div className={"divL"} >
+                {/*<div className={"ctxmenu"}>*/}
+                {/*    {*/}
+                {/*        ctx>0?(*/}
+                {/*            <>*/}
+                {/*                <ContextMenu global model={items} breakpoint="767px"/>*/}
+
+                {/*            </>*/}
+
+                {/*        ):""*/}
+                {/*    }*/}
+
+
+                {/*</div>*/}
+
+
+
                 <div className="card flex justify-content-center" onClick={()=>{ setProduse([]);}}>
+
                     {/*<Tree value={nodes} selectionMode="single" selectionKeys={selectedKey} onSelectionChange={(e) => setSelectedKey(e.value)} className="w-full md:w-30rem" />*/}
 
-                    <Tree value={nodes} filter expandedKeys={expandedKeys} selectionMode="single" selectionKeys={selectedKey} onSelect={(e)=>{selCaf(e);}}  onExpand={()=>{
-                            setProduse([]);}} onCollapse={()=>setProduse([])} className="w-full md:w-30rem" filterPlaceholder={"Ce cafea cautati?"}/>
+                    {/*<Tree value={nodes} filter expandedKeys={expandedKeys} selectionMode="single" selectionKeys={selectedKey} onSelect={(e)=>{selCaf(e);}}  onExpand={()=>{*/}
+                    {/*        setProduse([]);}} onCollapse={()=>setProduse([])} className="w-full md:w-30rem" filterPlaceholder={"Ce cautati?"}/>*/}
+                    <Tree value={nodes} filter expandedKeys={expandedKeys} selectionMode="single" selectionKeys={selectedKey} onSelect={(e)=>{selNode(e);}}  onExpand={()=>{
+                        setProduse([]);}} onCollapse={()=>setProduse([])} className="w-full md:w-30rem" filterPlaceholder={"Ce cautati?"} />
+
                 </div>
+
+
+
 
             </div>
                 <div className={"divR"}>
-                    <div className={"divsearch"}>
-                        <p>Search Coffee</p>
-                        <div className="card flex flex-wrap justify-content-center gap-3">
+
+                    {
+                        ch>0&&parinte!==null?(
+                            <>
+                                {/*<p>{parinte[`${Object.keys(parinte)[1]}`]}</p>*/}
+
+                                <Child parent={parinte} back={back} child={0} changed={ch}/>
+                            </>
+
+                        ):
+                            <>
+
+                                <div className={"divsearch"}>
+                                    <p>Search Coffee</p>
+                                    <div className="card flex flex-wrap justify-content-center gap-3">
                                 <span className="p-input-icon-left">
                                     <i className="pi pi-search" />
                                     <InputText  placeholder="Search" onBlur={(e)=>{filterTree(e)}} />
                                 </span>
-                        </div>
+                                    </div>
 
 
-                    </div>
-                    {
-                        produse!=null&&produse.length>0?(
-                            <div className={"divshow"}>
+                                </div>
                                 {
-                                    produse.map(u=>{
-                                        return <CardProdus produs={u}/>
-                                    })
+                                    produse!=null&&produse.length>0?(
+                                        <div className={"divshow"}>
+                                            {
+                                                produse.map(u=>{
+                                                    return <CardProdus produs={u}/>
+                                                })
+                                            }
+                                        </div>
+                                    ):""
+
                                 }
-                            </div>
-                        ):""
+
+
+
+
+                            </>
+
+
 
                     }
-
 
                 </div>
 
