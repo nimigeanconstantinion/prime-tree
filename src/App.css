@@ -1,3 +1,4 @@
+
 .App {
   text-align: center;
 }
@@ -24,9 +25,20 @@
   color: white;
 }
 
+
+
+.icomen{
+  margin-right: 20px;
+}
+
+
+
 .App-link {
   color: #61dafb;
 }
+
+
+
 
 @keyframes App-logo-spin {
   from {
@@ -36,3 +48,36 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* custom-context-menu.css */
+
+  /* Change the background color of the menu items */
+.p-contextmenu .p-menuitem {
+  background-color: white;
+}
+
+/* Change the font color of the menu items */
+.p-contextmenu .p-menuitem-text {
+  color: darkred !important;
+}
+
+/* Change the background color of the menu items on hover */
+.p-contextmenu .p-menuitem:hover {
+  color:yellow !important;
+
+}
+
+/* Change the font color of the menu items on hover */
+.p-contextmenu .p-menuitem:hover .p-menuitem-text {
+  color: #fff;
+}
+
+.p-menuitem-active .p-menuitem-link{
+  background-color: #6869F5 !important;
+  color: whitesmoke !important;
+}
+.p-menuitem-active .p-menuitem-link .p-menuitem-text{
+  color: whitesmoke !important;
+}
+

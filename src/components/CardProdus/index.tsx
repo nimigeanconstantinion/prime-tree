@@ -1,6 +1,6 @@
 import {ProdusDisponibil} from "../model/ListaCafenele";
 import {WrapperCard} from "./CardStyle";
-import logo from '../images/O3EKFZ1.png';
+import  logo  from "../images/O3EKFZ1.png";
 
 
 interface CardProps{
@@ -14,9 +14,8 @@ const index:React.FC<CardProps>=({produs})=>{
             <p className={"hiddenid"}>{produs.id}</p>
             <p className={"cardtitle"}>{produs.denumire}</p>
             <p className={"cardpret"}>Pret: {produs.pret} Lei</p>
-            <img className={"cardimg"} src={logo} />
-
-
+            <img className="cardimg" src={logo} />
+       
         </WrapperCard>
     );
 }
