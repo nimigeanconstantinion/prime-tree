@@ -1,6 +1,7 @@
 
 // @ts-ignore
 import styled from "styled-components";
+<script lang="javascript" src="dist/xlsx.full.min.js"></script>
 
 export const WrapperHome=styled.div.attrs({className:"divhome"})`
   width: 100vw;
@@ -67,9 +68,23 @@ export const WrapperHome=styled.div.attrs({className:"divhome"})`
   .card.flex{
     margin-left: 10px;  
   }
-  
-  
-  
-  
-  
-  `
+
+  .icomen{
+    margin-right: 10px;
+  }
+
+  .p-menu-.p-menuitem-text{
+    color:red !important;
+  }
+
+  .p-menuitem-icon{
+    margin-right: 5px; 
+  }
+
+.p-menu-item:hover{
+  background-color: #5e1d3d;
+}
+  .p-menu-list {
+    background-color: #5e1d3d;
+
+`

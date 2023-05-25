@@ -199,7 +199,7 @@ interface TreePr extends TreeProps{
 // ];
 
 
-function Index() {
+function Index_1() {
     const [nodes, setNodes] = useState<NodN[]>([
         {
             key: '0',
@@ -225,44 +225,44 @@ function Index() {
     const cm = useRef(null);
   //  const cm = useRef(null);
 
-    const items: MenuItem[] = [
-        { label: 'View', icon: 'pi pi-fw pi-search' },
-        { label: 'Delete', icon: 'pi pi-fw pi-trash' }
-    ];
+    // const items: MenuItem[] = [
+    //     { label: 'View', icon: 'pi pi-fw pi-search' },
+    //     { label: 'Delete', icon: 'pi pi-fw pi-trash' }
+    // ];
 
-//     const items: MenuItem[] = [
-//
-//         {
-//             label: 'Edit',
-//             icon: <FontAwesomeIcon className={"icomen"} icon={faEdit}/>,
-//             command: (event) => {
-//                 selmenu("EDIT");
-//             }
-//         },
-//         {
-//             label: 'Delete',
-//             icon: <FontAwesomeIcon className={"icomen"} icon={faMinus}/>,
-//             command: (event) => {
-//                 selmenu("DELETE");
-//             }
-//         },
-//         {
-//             label: 'Add Child',
-//             icon: <FontAwesomeIcon className={"icomen"} icon={faPersonCirclePlus} beat />,
-//             command: (event) => {
-//                 selmenu("EDIT");
-//             }
-//         },
-//
-//     {
-//         label: 'Quit',
-//         icon: <FontAwesomeIcon className={"icomen"} icon={faPlus}/>,
-//         command: (event) => {
-//             selmenu("QUIT");
-//     }
-//     }
-//
-// ];
+    const items: MenuItem[] = [
+
+        {
+            label: "ljklkllk",
+            icon: <FontAwesomeIcon className={"icomen"} icon={faEdit}/>,
+            command: (event) => {
+                selmenu("EDIT");
+            }
+        },
+        {
+            label: 'Delete',
+            icon: <FontAwesomeIcon className={"icomen"} icon={faMinus}/>,
+            command: (event) => {
+                selmenu("DELETE");
+            }
+        },
+        {
+            label: 'Add Child',
+            icon: <FontAwesomeIcon className={"icomen"} icon={faPersonCirclePlus} beat />,
+            command: (event) => {
+                selmenu("EDIT");
+            }
+        },
+
+    {
+        label: 'Quit',
+        icon: <FontAwesomeIcon className={"icomen"} icon={faPlus}/>,
+        command: (event) => {
+            selmenu("QUIT");
+    }
+    }
+
+];
 
 
     useEffect(() => {
@@ -894,15 +894,18 @@ function Index() {
         console.log("Context pentru");
         console.log(e.node.data);
         setCtx(1);
+        if(cm.current!=null){
+           // cm!.current.show(e);
+
+        }
     }
-    // @ts-ignore
-    // @ts-ignore
+
     return (
         <>
             <script lang="javascript" src="dist/xlsx.bundle.js"></script>
 
             <WrapperHome>
-                <ContextMenu global model={items} ref={cm}></ContextMenu>
+
 
             <div className={"divL"} >
                 {/*<div className={"ctxmenu"}>*/}
@@ -922,13 +925,13 @@ function Index() {
 
 
                 <div className="card flex justify-content-center" onClick={()=>{ setProduse([]);}}>
-
+                    <ContextMenu global model={items} ref={cm}></ContextMenu>
                     {/*<Tree value={nodes} selectionMode="single" selectionKeys={selectedKey} onSelectionChange={(e) => setSelectedKey(e.value)} className="w-full md:w-30rem" />*/}
 
                     {/*<Tree value={nodes} filter expandedKeys={expandedKeys} selectionMode="single" selectionKeys={selectedKey} onSelect={(e)=>{selCaf(e);}}  onExpand={()=>{*/}
                     {/*        setProduse([]);}} onCollapse={()=>setProduse([])} className="w-full md:w-30rem" filterPlaceholder={"Ce cautati?"}/>*/}
                     <Tree value={nodes} filter expandedKeys={expandedKeys} selectionMode="single" selectionKeys={selectedKey} onSelect={(e)=>{selNode(e);}}  onExpand={()=>{
-                        setProduse([]);}} onCollapse={()=>setProduse([])} className="w-full md:w-30rem" filterPlaceholder={"Ce cautati?"} />
+                        setProduse([]);}} onCollapse={()=>setProduse([])} className="w-full md:w-30rem" filterPlaceholder={"Ce cautati?"} onContextMenu={context}/>
 
                 </div>
 
@@ -990,4 +993,4 @@ function Index() {
     )
 }
 
-export default Index;
+export default Index_1;

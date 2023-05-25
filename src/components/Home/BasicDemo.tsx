@@ -1,16 +1,16 @@
-import React, {useRef} from "react";
-import {ContextMenu} from "primereact/contextmenu";
-import {MenuItem, MenuItemCommandEvent} from "primereact/menuitem";
+import React, { useRef } from 'react';
+import { ContextMenu } from 'primereact/contextmenu';
+import {MenuItem, MenuItemCommandEvent} from 'primereact/menuitem';
+// import 'primereact/resources/themes/lara-light-indigo/theme.css';   // theme
 
+import 'primereact/resources/themes/saga-orange/theme.css';
 
 import 'primereact/resources/primereact.css';                       // core css
 import 'primeicons/primeicons.css';
-// import 'primereact/resources/themes/saga-orange/theme.css';
+import {WrapperNewHome} from "./NewHomeStyle";
+// icons
 
-import {WrapperComp} from "./CompStyle";
-
-
-function Index(){
+export default function BasicDemo() {
     const cm = useRef<ContextMenu>(null);
     const items: MenuItem[] = [
         { label: 'View', icon: 'pi pi-fw pi-search',command: (event) => handleMenu(event, 'Option 1')
@@ -22,8 +22,7 @@ function Index(){
         console.log("Uraaa");
     }
     return (
-        <WrapperComp>
-            <link id="theme-link" rel="stylesheet" href="/themes/saga-orange/theme.css"/>
+        <WrapperNewHome>
 
             <div className="card flex md:justify-content-center">
                 <ContextMenu model={items} ref={cm} breakpoint="767px" />
@@ -32,9 +31,7 @@ function Index(){
             </div>
             <p>NU elellflfll</p>
 
-        </WrapperComp>
+        </WrapperNewHome>
 
     )
 }
-
-export default Index;

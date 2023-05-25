@@ -1,10 +1,12 @@
 import {  Dropdown,Menu} from 'antd'
+import index from "../CardProdus";
 
 
 function Menux(){
 
     const Item = Menu.Item
-    const menu = (value:HTMLElement) =>
+    const value:number=15;
+    const menu = (value:number) =>
         <Menu>
 
             <Item>Like it</Item>
@@ -12,7 +14,11 @@ function Menux(){
         </Menu>
     return(
         <>
-
+            <Dropdown overlay={menu(value)} trigger={[`contextMenu`]}>
+                <div onContextMenu={e=>{
+                    console.log("CLICK");
+                }}>{value}</div>
+            </Dropdown>
 
         </>
     );
