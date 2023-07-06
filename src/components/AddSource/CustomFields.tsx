@@ -8,7 +8,7 @@ interface CompProps{
 }
 
 interface Camp{
-    id:number,
+    id:string,
     name:string,
     type:string,
     value:string
@@ -17,6 +17,8 @@ interface Camp{
 const CustomFields:React.FC<CompProps>=({lista,minus})=>{
     const arrLength = lista.length;
     const [listaRef,setListaRef]=useState(lista);
+    const [fType,setFtype]=useState(1);
+
     // const refs = useRef<Array<React.Ref<HTMLInputElement>>>([]); // or an {}
     // Make it empty at every render cycle as we will get the full list of it at the end of the render cycle
       //  refs.current = []; // or an {}
@@ -41,8 +43,25 @@ const CustomFields:React.FC<CompProps>=({lista,minus})=>{
                 (chld[i] as HTMLInputElement).value=Object.values(f)[1];
                 i++;
                 (chld[i] as HTMLInputElement).value=Object.values(f)[2];
-                i++
-                (chld[i] as HTMLInputElement).value=Object.values(f)[3];
+                let xt=Object.values(f)[2].toString();
+                i++;
+                let xfld=Object.values(f)[3];
+                if(xt=="date"){
+                    console.log("e de tip data");
+                    (chld[i] as HTMLInputElement).type="date";
+
+                    let dt:Date=new Date(xfld);
+                    (chld[i] as HTMLInputElement).value=xfld;
+                    (chld[i] as HTMLInputElement).className="cell date"
+
+
+                }else{
+                    (chld[i] as HTMLInputElement).value=Object.values(f)[3];
+                    (chld[i] as HTMLInputElement).className="cell"
+
+                }
+
+
                 i++;
 
             })
@@ -88,9 +107,26 @@ const CustomFields:React.FC<CompProps>=({lista,minus})=>{
    }
 
    let chType=(e:any,index:number)=>{
-
        let newc=lista[index] as Camp;
-       newc.type=e.target.value
+       newc.type=e.target.value;
+       console.log("Schimb campil "+index)
+       switch(newc.type){
+           case 'date':
+               setFtype(3)
+               e.target.nextElementSibling.type="date"
+
+               break;
+           case 'string':
+               setFtype(1)
+               e.target.nextElementSibling.type="text"
+
+               break;
+           case 'number':
+               setFtype(2)
+               e.target.nextElementSibling.type="text"
+
+               break;
+       }
 
    }
 
@@ -115,13 +151,18 @@ const CustomFields:React.FC<CompProps>=({lista,minus})=>{
                                        }} onInput={(e)=>{
                                                 chName(e,index);
                                        }}/>
-                                       <select key={index+"-1"} className={"selopt"} onChange={(e)=>chType(e,index)}>
+                                       <select key={index+"-1"} className={"selopt"} onChange={(e)=>chType(e,index)} onSelect={(e)=>{
+
+                                       }}>
                                            <option>string</option>
                                            <option>number</option>
                                            <option>date</option>
                                        </select>
 
-                                       <input  className={"cell"} type={"text"} onChange={(e)=>chVal(e,index)}/>
+                                       <input  className={"cell vall"} type={"text"} onChange={(e)=>chVal(e,index)} onClick={e=>{
+                                           console.log(e.target)
+                                       }}/>
+
 
 
 

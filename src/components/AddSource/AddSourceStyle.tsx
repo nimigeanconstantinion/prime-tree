@@ -17,7 +17,7 @@ export const WrapperFormAdd=styled.div.attrs({className:"divadd"})`
     background-color: wheat;
     margin: auto;
     font-size: 1em;
-    padding: 20px;
+    padding: 15px;
   }
   
   label{
@@ -29,6 +29,9 @@ export const WrapperFormAdd=styled.div.attrs({className:"divadd"})`
   .cell{
     margin: 2px 2px;
     width: 200px;
+  }
+  .cell ,date{
+    max-width: 200px;
   }
   input[type=text] {
     height: 30px;
@@ -128,7 +131,9 @@ export const WrapperFormAdd=styled.div.attrs({className:"divadd"})`
   }
 
   .btnd{
-    margin: 2px;
+    margin-top:3px;
+    margin-bottom:3px;
+    margin-left: 10px;
     height: 40px;
   }
   #col1,#col2{

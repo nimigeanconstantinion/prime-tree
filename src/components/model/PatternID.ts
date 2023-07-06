@@ -1,5 +1,6 @@
 
 
-export default interface CustomID{
-    patern:string,
+export default interface PatternID {
+    prefix:string,
+    corp:string
 }

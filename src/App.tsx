@@ -1,8 +1,10 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Home from './components/BasicPage/index';
+// import Home from './components/BasicPage/index';
+//import Home from './components/Home/index_1'
 import XLSX from "xlsx";
+import Home from './components/PatternID/index'
 
 //import JS_XLSX from "js-xlsx"
 function App() {
@@ -56,6 +58,8 @@ function App() {
           {/*    </div>*/}
           {/*</div>*/}
           <Home/>
+          {/*<p>*/}
+          {/*    Uraaaaaaa</p>*/}
       </>
 
   );

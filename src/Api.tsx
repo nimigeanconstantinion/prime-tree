@@ -1,4 +1,5 @@
 import ResponseImpl from "./components/model/ResponseImpl";
+import BKNode from "./components/model/BKNode";
 
 
 type ResponseBody = {};
@@ -29,7 +30,7 @@ export default class Api {
 
     getTree=async ():Promise<Object[]>=>{
 
-        let response = await this.api("http://localhost:8080/api/v1/tree/tree", "GET",null);
+        let response = await this.api("http://localhost:8080/api/v1/tree", "GET",null);
         console.log(response);
         // let ret=await response.json();
         // console.log("RET di api");
@@ -39,9 +40,32 @@ export default class Api {
         return ret;
     }
 
-    saveNode=async():Promise<void>=>{
+    saveNode=async(nod:BKNode):Promise<void>=>{
+        let response = await this.api("http://localhost:8080/api/v1/tree/updnode", "POST",nod);
 
+    }
 
-}
+    deleteNode=async(id:String):Promise<Object[]>=>{
+        let response = await this.api("http://localhost:8080/api/v1/tree/delnode/"+id, "DELETE",null);
+        return response.json();
+
+    }
+
+    addNode=async(nod:BKNode,idP:String):Promise<BKNode>=>{
+        let response = await this.api("http://localhost:8080/api/v1/tree/addchild/"+idP, "POST",nod);
+        return response.json();
+
+    }
+
+    addChild=async(nod:BKNode,idP:String):Promise<BKNode>=>{
+        let response = await this.api("http://localhost:8080/api/v1/tree/addchild/"+idP, "POST",nod);
+        return response.json();
+
+    }
+
+    getNodeByLabel=async (lbl:String):Promise<BKNode>=>{
+        let response = await this.api("http://localhost:8080/api/v1/tree/getnodebylabel/"+lbl, "GET",null);
+        return response.json();
+    }
 
 }

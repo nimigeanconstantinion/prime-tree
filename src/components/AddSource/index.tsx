@@ -38,9 +38,8 @@ interface Parinte{
     id:number,
     label:string,
     descriere:string,
-    tip:string,
-
-
+    subordinates:[],
+    cFields:[]
 }
 
 const Index:React.FC<AddProps>=({parent,back,child,changed})=>{
@@ -72,12 +71,14 @@ const Index:React.FC<AddProps>=({parent,back,child,changed})=>{
 
     useEffect(()=>{
          console.log("alalja; ksdkl kldslk lskdsdf lk")
+         console.log(sursa);
         if(refL.current!=null){
 
             refL.current.value=Object.values(sursa)[1];
 
         }
         if(Object.values(sursa).length>4){
+
             let val:Object[]=Object.values(Object.values(sursa)[6]);
             let listaf:Fields[]=[];
             val.map((x,index)=>{
