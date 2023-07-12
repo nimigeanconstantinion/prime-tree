@@ -1,46 +1,50 @@
-# Getting Started with Create React App
+export const generateSerialNumbers = (serialNumberFormat: SerialNumberFormatDto, quantity: number): string[] => {
+  const {
+    count, format, initialValue, maximalValue
+  } = serialNumberFormat;
+  const today: Date = new Date(Date.now());
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+  const rawSerialNumber: string = format
+    .replace(/\{DD\}/, `${today.getUTCDate()}`.padStart(2, '0'))
+    .replace(/\{MM\}/, `${today.getUTCMonth() + 1}`.padStart(2, '0'))
+    .replace(/\{WW\}/, `${getCurrentCalendarWeek()}`.padStart(2, '0'))
+    .replace(/\{YY\}/, `${today.getUTCFullYear()}`.substr(2))
+    .replace(/\{YYYY\}/, `${today.getUTCFullYear()}`)
+    .replace(/\{DOY\}/, `${getCurrentDayOfYear()}`);
 
-## Available Scripts
+  const requiredCharacterCount: number = ((format.match(/\{[@#\$]{1,}\}/)?.[0] ?? '').match(/[@#\$]{1,}/)?.[0] ?? '').length;
+  const isAlphanumeric = !!format.match(/\{@{1,}\}/);
+  const isHexadecimal = !!format.match(/\{\${1,}\}/);
+  const serialNumbers: string[] = [];
 
-In the project directory, you can run:
+  for (let quantityCount = 0; quantityCount < quantity; quantityCount += 1) {
+    const calculatedCount: number = initialValue + count - quantity + quantityCount;
+    const currentCount: number = calculatedCount > maximalValue && isAlternativeMonthEnabled(format) ? calculatedCount - maximalValue + initialValue - 1 : calculatedCount;
+    let currentCountFormated: string;
+    if (isAlphanumeric) {
+      currentCountFormated = generateAlphanumericStringFromNumber(currentCount);
+    } else if (isHexadecimal) {
+      currentCountFormated = decimalToHexadecimal(currentCount);
+    } else {
+      currentCountFormated = `${currentCount}`;
+    }
+    const currentCountString: string = `${currentCountFormated}`.padStart(requiredCharacterCount, '0');
 
-### `npm start`
+    const isAlternativeDate: boolean = isAlternativeMonthActive({
+      count: count - quantity + quantityCount,
+      format,
+      initialValue,
+      maximalValue
+    } as SerialNumberFormatDto);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+    const siemensDateIndicator: string = isAlternativeDate ? createAlternativeSiemensDateIndicator() : createSiemensDateIndicator(); // {SI} | {SI2M} | {SIMA}
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+    const serialNumber: string = rawSerialNumber
+      .replace(/\{[@#\$]{1,}\}/, currentCountString)
+      .replace(/\{SI\}/, siemensDateIndicator)
+      .replace(/\{SI2M\}/, siemensDateIndicator)
+      .replace(/\{SIMA\}/, siemensDateIndicator);
+    serialNumbers.push(serialNumber);
+  }
+  return serialNumbers;
+};
